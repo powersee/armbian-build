@@ -1,0 +1,60 @@
+name: Build image
+on:
+  repository_dispatch:
+  workflow_dispatch:
+    inputs:
+      ssh:
+        description: 'SSH connection to Actions'
+        required: false
+        default: 'false'
+
+jobs:
+  build:
+    name: latest
+    runs-on: ubuntu-latest
+    steps:
+     - uses: actions/checkout@v1
+     - name: SSH connection to Actions
+       uses: P3TERX/ssh2actions@v1.0.0
+       if: (github.event.inputs.ssh == 'true' && github.event.inputs.ssh  != 'false') || contains(github.event.action, 'ssh')     
+    #  - name: Build image
+    #    run: |
+    #     ./compile.sh  BOARD=aml-s812 BRANCH=${{ github.event.inputs.branch }} RELEASE=${{ github.event.inputs.release }} BUILD_MINIMAL=no BUILD_DESKTOP=no KERNEL_ONLY=no KERNEL_CONFIGURE=no COMPRESS_OUTPUTIMAGE=img   
+    #  - name: finish
+    #    run: echo "enjoy" && ls -alh
+     
+    #  - name: xz
+    #    run: |
+    #     pwd
+    #     sudo xz -9kv output/images/*.img 
+    #     cd output/images/
+    #     ls -alh
+    #     echo "FIRMWARE=$PWD" >> $GITHUB_ENV
+       
+    #  - name: install transfer and upload to wet
+    #    run: |
+    #      curl -fsSL git.io/file-transfer | sh
+    #      $PWD/transfer wet ${FIRMWARE}/*.xz
+       
+     
+    #  - name: SSH connection to Actions
+    #    uses: P3TERX/ssh2actions@v1.0.0
+    #    if: ${{ failure() }}     
+    #    env:
+    #      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+    #      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+
+    #  - name: upload to artifact
+    #    uses: actions/upload-artifact@main
+    #    with:
+    #      name: armbian-s812-${{ github.event.inputs.release }}
+    #      path: ${{ env.FIRMWARE }}/*.xz
+
+    #  - name: send tg message
+    #    uses: appleboy/telegram-action@master
+    #    with:
+    #       to: ${{ secrets.TELEGRAM_TO }}
+    #       token: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+    #       message: |
+    #         The ${{ env.FIRMWARE }} armbian ${{ github.event.inputs.release }}
+    #         compile done.
